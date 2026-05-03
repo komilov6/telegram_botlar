@@ -90,3 +90,13 @@ bot.on('message', async (msg) => {
 
 // Xatolar uchun log
 bot.on("polling_error", (err) => console.log(err));
+
+// Render Web Service da tekin ishlashi uchun kichik (dummy) server
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Bot is running successfully!');
+}).listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+});

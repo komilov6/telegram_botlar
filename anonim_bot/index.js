@@ -3,8 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const token = process.env.BOT_TOKEN;
 const adminId = process.env.ADMIN_ID;
-const adminPhone = process.env.ADMIN_PHONE || '+998337012686';
-const availableTime = process.env.AVAILABLE_TIME || 'Har kuni 8:00 dan 22:00 gacha';
+
 
 if (!token) {
     console.error('BOT_TOKEN topilmadi! .env faylini tekshiring.');
@@ -90,3 +89,13 @@ bot.on('message', async (msg) => {
 
 // Xatolar uchun log
 bot.on("polling_error", (err) => console.log(err));
+
+// Render Web Service da tekin ishlashi uchun kichik (dummy) server
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Bot is running successfully!');
+}).listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+});
