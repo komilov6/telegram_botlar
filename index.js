@@ -3,8 +3,8 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const token = process.env.BOT_TOKEN;
 const adminId = process.env.ADMIN_ID;
-const adminPhone = process.env.ADMIN_PHONE || '+998 90 123 45 67';
-const availableTime = process.env.AVAILABLE_TIME || 'Dushanba - Juma, 09:00 - 18:00';
+const adminPhone = process.env.ADMIN_PHONE || '+998337012686';
+const availableTime = process.env.AVAILABLE_TIME || 'Har kuni 8:00 dan 22:00 gacha';
 
 if (!token) {
     console.error('BOT_TOKEN topilmadi! .env faylini tekshiring.');
