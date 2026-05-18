@@ -3,17 +3,30 @@ const http = require('http');
 
 console.log('Master server ishga tushmoqda...');
 
+// Botlarni avtomatik qayta ishga tushiruvchi funksiya
+function startBot(scriptPath, envToken, port) {
+    const env = { ...process.env, BOT_TOKEN: process.env[envToken] || process.env.BOT_TOKEN, PORT: port };
+    let botProcess = fork(scriptPath, [], { env });
+
+    botProcess.on('error', (err) => {
+        console.error(`${scriptPath} da xato:`, err);
+    });
+
+    botProcess.on('exit', (code) => {
+        console.log(`⚠️ DIQQAT: ${scriptPath} to'xtab qoldi (xato kodi: ${code}). 5 soniyadan keyin avtomatik qayta ishga tushiriladi...`);
+        setTimeout(() => {
+            startBot(scriptPath, envToken, port);
+        }, 5000);
+    });
+
+    return botProcess;
+}
+
 // 1-chi botni ishga tushirish (Asosiy bot)
-// Agar Renderda BOT_TOKEN_1 o'zgaruvchisi kiritilgan bo'lsa, shuni ishlatadi
-const bot1 = fork('index.js', [], {
-  env: { ...process.env, BOT_TOKEN: process.env.BOT_TOKEN_1 || process.env.BOT_TOKEN, PORT: 3001 }
-});
+startBot('index.js', 'BOT_TOKEN_1', 3001);
 
 // 2-chi botni ishga tushirish (Anonim bot)
-// Agar Renderda BOT_TOKEN_2 o'zgaruvchisi kiritilgan bo'lsa, shuni ishlatadi
-const bot2 = fork('anonim_bot/index.js', [], {
-  env: { ...process.env, BOT_TOKEN: process.env.BOT_TOKEN_2 || process.env.BOT_TOKEN, PORT: 3002 }
-});
+startBot('anonim_bot/index.js', 'BOT_TOKEN_2', 3002);
 
 // Render xato bermasligi uchun asosiy veb-server
 const PORT = process.env.PORT || 3000;
@@ -23,10 +36,3 @@ http.createServer((req, res) => {
 }).listen(PORT, () => {
     console.log(`Render uchun veb-server ${PORT}-portda ishga tushdi.`);
 });
-
-// Xatoliklarni ushlab turish
-bot1.on('error', (err) => console.error('Bot 1 da xato:', err));
-bot2.on('error', (err) => console.error('Bot 2 da xato:', err));
-
-bot1.on('exit', (code) => console.log(`Bot 1 to'xtab qoldi (xato kodi: ${code})`));
-bot2.on('exit', (code) => console.log(`Bot 2 to'xtab qoldi (xato kodi: ${code})`));
