@@ -89,7 +89,9 @@ bot.on('message', async (msg) => {
 });
 
 // Xatolar uchun log
-bot.on("polling_error", (err) => console.log(err));
+bot.on("polling_error", (err) => {
+    console.log("Polling xatosi:", err.message || err.code || err);
+});
 
 // Render Web Service da tekin ishlashi uchun kichik (dummy) server
 const http = require('http');
